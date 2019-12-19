@@ -4,6 +4,7 @@ import hsh.hardwork.community.dto.AccessTokenDto;
 import hsh.hardwork.community.dto.GithubUser;
 import hsh.hardwork.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
+
+    @Value("${github.client.id}")
+    private String clientId;
+
+    @Value("${github.client.secret}")
+    private String clientSecret;
+    @Value("${github.redirect.uri}")
+    private String redirectUri;
     /*
     与github用户登陆授权对应的接口，自己可以定义
      */
@@ -20,10 +29,10 @@ public class AuthorizeController {
                            @RequestParam(name= "state") String state){
         AccessTokenDto accessTokenDto = new AccessTokenDto();
         accessTokenDto.setCode(code);
-        accessTokenDto.setRedirct_uri("http://localhost:8887/callback");
+        accessTokenDto.setRedirct_uri(redirectUri);
         accessTokenDto.setState(state);
-        accessTokenDto.setClient_id("2b7200c214be214b9295");
-        accessTokenDto.setClient_secret("f64bf5dcfec9405cbac1ded65f720a543b07d4af");
+        accessTokenDto.setClient_id(clientId);
+        accessTokenDto.setClient_secret(clientSecret);
 
         String accessToken = githubProvider.getAccessToken(accessTokenDto);
         GithubUser user = githubProvider.getUser(accessToken);
